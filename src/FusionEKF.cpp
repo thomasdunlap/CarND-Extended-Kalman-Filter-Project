@@ -24,19 +24,30 @@ FusionEKF::FusionEKF() {
 
   //measurement covariance matrix - laser
   R_laser_ << 0.0225, 0,
-        0, 0.0225;
+              0, 0.0225;
 
   //measurement covariance matrix - radar
   R_radar_ << 0.09, 0, 0,
-        0, 0.0009, 0,
-        0, 0, 0.09;
+              0, 0.0009, 0,
+              0, 0, 0.09;
 
-  /**
-  TODO:
-    * Finish initializing the FusionEKF.
-    * Set the process and measurement noises
-  */
+  H_laser_ << 1, 0, 0, 0,
+              0, 1, 0, 0;
 
+  Hj_ << 1, 0, 0, 0,
+         0, 1, 0, 0,
+         0, 0, 1000, 0,
+         0, 0, 0, 1000;
+
+  MatrixXd F_ = MatrixXd(4, 4);
+  MatrixXd Q_ = MatrixXd(4, 4);
+
+  VectorXd x_ = VectorXd(4);
+
+  ekf_.Init(x_, Hj_, F_, H_laser_, R_laser_, Q_);
+
+  noise_ax = 9;
+  noise_ay = 9;
 
 }
 
