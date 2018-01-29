@@ -13,39 +13,40 @@ using std::vector;
  */
 FusionEKF::FusionEKF() {
   is_initialized_ = false;
-
   previous_timestamp_ = 0;
 
-  // initializing matrices
+  // Initializing matrices
   R_laser_ = MatrixXd(2, 2);
   R_radar_ = MatrixXd(3, 3);
   H_laser_ = MatrixXd(2, 4);
   Hj_ = MatrixXd(3, 4);
 
-  //measurement covariance matrix - laser
+  // Laser measurement covariance
   R_laser_ << 0.0225, 0,
               0, 0.0225;
 
-  //measurement covariance matrix - radar
+  // Radar measurement convariance
   R_radar_ << 0.09, 0, 0,
               0, 0.0009, 0,
               0, 0, 0.09;
 
+  // Laser measurement matrix
   H_laser_ << 1, 0, 0, 0,
               0, 1, 0, 0;
 
+  // Radar measurement matrix
   Hj_ << 1, 0, 0, 0,
          0, 1, 0, 0,
          0, 0, 1000, 0,
          0, 0, 0, 1000;
 
-  MatrixXd F_ = MatrixXd(4, 4);
-  MatrixXd Q_ = MatrixXd(4, 4);
-  // might not need
-  VectorXd x_ = VectorXd(4);
+  MatrixXd F_ = MatrixXd(4, 4); // Transition matrix
+  MatrixXd Q_ = MatrixXd(4, 4); // Process covariance matrix
+  VectorXd x_ = VectorXd(4); // State vector
 
   ekf_.Init(x_, Hj_, F_, H_laser_, R_laser_, Q_);
 
+  // Acceleration noise components
   noise_ax = 9;
   noise_ay = 9;
 
