@@ -53,17 +53,16 @@ FusionEKF::FusionEKF() {
 
 /**
 * Destructor.
+* Currently nothing here.
 */
 FusionEKF::~FusionEKF() {}
 
 void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
-
   /*****************************************************************************
    *  Initialization
    ****************************************************************************/
   if (!is_initialized_) {
-
     float px = 0;
     float py = 0;
     float vx = 0;
@@ -84,7 +83,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       px = measurement_pack.raw_measurements_[0];
       py = measurement_pack.raw_measurements_[1];
     }
-
 
     ekf_.x_ << px, py, vx, vy;
 
