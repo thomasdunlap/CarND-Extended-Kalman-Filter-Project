@@ -20,7 +20,7 @@ FusionEKF::FusionEKF() {
   R_radar_ = MatrixXd(3, 3);
   H_laser_ = MatrixXd(2, 4);
   Hj_ = MatrixXd(3, 4);
-  P_ = MatrixXd(4, 4);
+
 
   // Laser measurement covariance
   R_laser_ << 0.0225, 0,
@@ -35,21 +35,11 @@ FusionEKF::FusionEKF() {
   H_laser_ << 1, 0, 0, 0,
               0, 1, 0, 0;
 
-  // Radar measurement matrix
-  P_ << 1, 0, 0, 0,
-         0, 1, 0, 0,
-         0, 0, 1000, 0,
-         0, 0, 0, 1000;
-
   MatrixXd F_ = MatrixXd(4, 4); // Transition matrix
   MatrixXd Q_ = MatrixXd(4, 4); // Process covariance matrix
   VectorXd x_ = VectorXd(4); // State vector
 
-  ekf_.Init(x_, P_, F_, H_laser_, R_laser_, Q_);
 
-  // Acceleration noise components
-  int noise_ax = 9;
-  int noise_ay = 9;
 }
 
 /**
@@ -72,7 +62,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     // first measurement
     cout << "EKF: " << endl;
     ekf_.x_ = VectorXd(4);
-    ekf_.x_ << 1, 1, 1, 1;
+    //ekf_.x_ << 1, 1, 1, 1;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       float rho = measurement_pack.raw_measurements_[0];
@@ -86,6 +76,14 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     }
 
     ekf_.x_ << px, py, vx, vy;
+
+    // Radar measurement matrix
+    ekf_.P_ = MatrixXd(4, 4);
+    ekf_.P_ << 1, 0, 0, 0,
+           0, 1, 0, 0,
+           0, 0, 1000, 0,
+           0, 0, 0, 1000;
+
 
     previous_timestamp_ = measurement_pack.timestamp_;
     is_initialized_ = true;
@@ -108,6 +106,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   float dt_2 = dt * dt;
   float dt_3 = dt_2 * dt;
   float dt_4 = dt_3 * dt;
+  // Acceleration noise components
+  int noise_ax = 9;
+  int noise_ay = 9;
 
   ekf_.F_(0, 2) = dt;
   ekf_.F_(1, 3) = dt;
