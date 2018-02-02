@@ -98,7 +98,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
                0, 0, 0, 500;
 
     // Initial state transition matrix
-    ekf_.F_ = 1, 0, 1, 0,
+    ekf_.F_ << 1, 0, 1, 0,
               0, 1, 0, 1,
               0, 0, 1, 0,
               0, 0, 0, 1;
