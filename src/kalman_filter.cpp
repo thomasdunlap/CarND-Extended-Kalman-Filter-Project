@@ -1,5 +1,7 @@
 #include "kalman_filter.h"
 
+#define PI 3.14159265
+
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -30,12 +32,15 @@ void KalmanFilter::Update(const VectorXd &z) {
   VectorXd z_pred = H_ * x_;
   VectorXd y = z - z_pred;
   MatrixXd Ht = H_.transpose();
-  MatrixXd S = H_ * P_ * Ht + R_;
-  MatrixXd Si = S.inverse();
   MatrixXd PHt = P_ * Ht;
+  MatrixXd S = H_ * PHt + R_;
+  MatrixXd Si = S.inverse();
   MatrixXd K = PHt * Si;
 
+  // Upate state vector
   x_ = x_ + (K * y);
+
+  // Update covariance matrix
   long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
@@ -48,20 +53,36 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   double vy = x_[3];
 
   double rho = sqrt(px * px + py * py);
-  double phi = atan(py / px);
+  double phi = atan2(py,px);
+  // Make sure rho_dot never divides by zero
+  if (rho < 0.0001) {
+    rho = 0.0001;
+  }
   double rho_dot = (px * vx + py * vy) / rho;
 
-  VectorXd z_pred(3);
+
+
+  VectorXd z_pred = VectorXd(3);
   z_pred << rho, phi, rho_dot;
 
   VectorXd y = z - z_pred;
+
+  //Adjust the value of theta if it is outside of [-PI, PI]
+  if (y[1] > PI){
+    y[1] = y[1] - 2 * PI;
+  }
+  else if (y[1] < -PI){
+    y[1] = y[1] + 2 * PI;
+  }
+
   MatrixXd Ht = H_.transpose();
-  MatrixXd S = H_ * P_ * Ht + R_;
-  MatrixXd Si = S.inverse();
   MatrixXd PHt = P_ * Ht;
+  MatrixXd S = H_ * PHt + R_;
+  MatrixXd Si = S.inverse();
   MatrixXd K = PHt * Si;
 
   x_ = x_ + (K * y);
+
   long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
