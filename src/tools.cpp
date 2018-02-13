@@ -44,13 +44,10 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   float vx = x_state(2);
   float vy = x_state(3);
 
-
   MatrixXd Hj(3, 4);
   Hj << 0,0,0,0,
         0,0,0,0,
         0,0,0,0;
-
-
 
   //Check for small values of position magnitude to avoid division by zero
   float rho = pow((pow(px,2) + pow(py,2)), 0.5);
@@ -60,14 +57,16 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   }
 
   float inv_rho = pow(rho, -1);
-  Hj(0,0) = px * inv_rho;
-  Hj(1,0) = -py * pow(inv_rho,2);
-  Hj(2,0) = py * (vx*py - vy*px) * pow(inv_rho, 3);
-  Hj(0,1) = py * inv_rho;
-  Hj(1,1) = px * pow(inv_rho, 2);
-  Hj(2,1) = px * (vy*px - vx*py) * pow(inv_rho,3);
-  Hj(2,2) = Hj(0,0);
-  Hj(2,3) = Hj(0,1);
+  Hj(0, 0) = px * inv_rho;
+  Hj(1, 0) = -py * pow(inv_rho,2);
+  Hj(2, 0) = py * (vx*py - vy*px) * pow(inv_rho, 3);
+  Hj(0, 1) = py * inv_rho;
+  Hj(1, 1) = px * pow(inv_rho, 2);
+  Hj(2, 1) = px * (vy*px - vx*py) * pow(inv_rho, 3);
+  Hj(2, 2) = Hj(0, 0);
+  Hj(2, 3) = Hj(0, 1);
+
+  
 
 /*
   float c1 = px*px + py*py;
