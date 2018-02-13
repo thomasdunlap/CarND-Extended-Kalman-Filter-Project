@@ -45,42 +45,18 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   float vy = x_state(3);
 
   MatrixXd Hj(3, 4);
-  Hj << 0,0,0,0,
-        0,0,0,0,
-        0,0,0,0;
 
   //Check for small values of position magnitude to avoid division by zero
   float rho = pow((pow(px,2) + pow(py,2)), 0.5);
-  if( rho < 0.0001){
+  if(rho < 0.0001){
     cout << "Rho too small. Rho now equals 0.0001";
     rho = 0.0001;
   }
 
   float inv_rho = pow(rho, -1);
-  Hj(0, 0) = px * inv_rho;
-  Hj(1, 0) = -py * pow(inv_rho,2);
-  Hj(2, 0) = py * (vx*py - vy*px) * pow(inv_rho, 3);
-  Hj(0, 1) = py * inv_rho;
-  Hj(1, 1) = px * pow(inv_rho, 2);
-  Hj(2, 1) = px * (vy*px - vx*py) * pow(inv_rho, 3);
-  Hj(2, 2) = Hj(0, 0);
-  Hj(2, 3) = Hj(0, 1);
+  Hj << px*inv_rho, py*inv_rho, 0, 0,
+        -py * pow(inv_rho,2), px * pow(inv_rho, 2), 0, 0,
+        py * (vx*py - vy*px) * pow(inv_rho, 3), px * (vy*px - vx*py) * pow(inv_rho, 3), px*inv_rho, py*inv_rho;
 
-  
-
-/*
-  float c1 = px*px + py*py;
-  float c2 = sqrt(c1);
-  float c3 = c1 * c2;
-
-  if (fabs(c1) < 0.0001) {
-    std::cout << "Error: CalculateJacobian() division by zero." << std::endl;
-    return Hj;
-  }
-
-  Hj << px/c2, py/c2, 0, 0,
-        -(py/c1), px/c1, 0, 0,
-        py*(vx*py - vy*px) /c3, px*(px*vy - py*vx) /c3, px/c2, py/c2;
-*/
   return Hj;
 }
