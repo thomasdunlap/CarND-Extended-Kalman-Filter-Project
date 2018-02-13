@@ -1,5 +1,20 @@
 # Extended Kalman Filter Project
+
+![Screen shot of RSME values and final path][final_screen]
+
 #### Self-Driving Car Engineer Nanodegree Program
+
+[//]: # (Image References)
+
+[final_screen]: ./images/final_screenshot.png "Screen shot of final path."
+
+RMSE = X.0970, Y.0854, VX.4259, VY.4397
+|Measure  | RSME    |
+|---------|---------|
+| X       |  .0970|
+| Y       |  .0854|
+| VX      |  .4259|
+| VY      |  .4397|
 
 In this project you will utilize a kalman filter to estimate the state of a moving object of interest with noisy lidar and radar measurements. Passing the project requires obtaining RMSE values that are lower that the tolerance outlined in the project rubric.
 
